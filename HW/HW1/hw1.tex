@@ -1,0 +1,62 @@
+\documentclass[12pt]{article}  
+\usepackage{graphicx}
+\usepackage{geometry}   %设置页边距的宏包
+\usepackage{algpseudocode}
+\usepackage{comment}
+\usepackage{amsmath, amssymb, amsthm, scalerel}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{framed}
+\usepackage{verbatim}
+\usepackage{microtype}
+\usepackage{kpfonts}
+\usepackage{multicol}
+\usepackage{amsfonts}
+\usepackage{array}
+\usepackage{color}
+\usepackage{pgf,tikz}
+\usepackage{forest}
+\usetikzlibrary{automata, positioning, arrows}
+\usepackage{wrapfig}
+\usepackage{MnSymbol}
+\usepackage{mathtools}
+\newcommand{\solu}{{\color{blue} Solution:}}
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+\newcommand{\Ib}{\mathbf{I}}
+\newcommand{\Pb}{\mathbf{P}}
+\newcommand{\Qb}{\mathbf{Q}}
+\newcommand{\Rb}{\mathbf{R}}
+\newcommand{\Nb}{\mathbf{N}}
+\newcommand{\Fb}{\mathbf{F}}
+\newcommand{\Z}{\mathbf{Z}}
+\newcommand{\Lap}{\mathcal{L}}
+\newcommand{\Zplus}{\mathbf{Z}^+}
+\newcommand{\rightarrstar}{\xrightarrow{*}}
+\def\msquare{\mathord{\scalerel*{\Box}{gX}}}
+\geometry{left=2cm,right=2cm,top=1.5cm,bottom=2cm}  %设置 上、左、下、右 页边距
+
+% \tikzset{
+%     ->, % makes the edges directed
+%     >=stealth, % makes the arrow heads bold
+%     node distance=3cm, % specifies the minimum distance between two nodes. Change if necessary.
+%     every state/.style={thick, fill=gray!10}, % sets the properties for each ’state’ node
+%     initial text=$ $, % sets the text that appears on the start arrow
+% } 
+
+\title{CS3200 HW1}
+\date{}
+\author{Xin Guan}
+
+\begin{document}
+    \maketitle
+    \begin{enumerate}
+        \item Discuss the differences between DDL and DML. What operations would you typically expect to be available in each language? 
+        \item Describe the difference between data security and data integrity. 
+        \item What advantages do databases provide over early file-based approaches? Give at least three examples.
+        \item What is concurrency control and why does a DBMS need a concurrency control facility?
+        \item What is a transaction? Give an example of a transaction. 
+        \item What is meant by the term ‘client-server architecture’and what are the advantages of this approach? Compare the client-server architecture with two other architectures. 
+        \item  In the 2016 InfoWorld article “What eBay looks like under the hood” what problem did eBay have with their product catalog? How is this a database design problem? Compare eBay’s approach to the way in which Amazon allows third-party vendors to sell used books.
+        \item  The two assigned articles from the February issue of The Scientist both mention the building of Databases. How do these databasesfacilitate the scientific research discussed in each article? Is the rational for building a database in each case similar? Justify your answer.
+    \end{enumerate}
+\end{document}
