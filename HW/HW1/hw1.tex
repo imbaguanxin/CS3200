@@ -35,13 +35,12 @@
 \def\msquare{\mathord{\scalerel*{\Box}{gX}}}
 \geometry{left=2cm,right=2cm,top=1.5cm,bottom=2cm}  %设置 上、左、下、右 页边距
 
-% \tikzset{
-%     ->, % makes the edges directed
-%     >=stealth, % makes the arrow heads bold
-%     node distance=3cm, % specifies the minimum distance between two nodes. Change if necessary.
-%     every state/.style={thick, fill=gray!10}, % sets the properties for each ’state’ node
-%     initial text=$ $, % sets the text that appears on the start arrow
-% } 
+\usepackage[boxruled,vlined,nofillcomment]{algorithm2e}
+	\SetKwProg{Fn}{Function}{\string:}{}
+	\SetKwFor{While}{While}{}{}
+	\SetKwFor{For}{For}{}{}
+	\SetKwIF{If}{ElseIf}{Else}{If}{:}{ElseIf}{Else}{:}
+	\SetKw{Return}{Return}
 
 \title{CS3200 HW1}
 \date{}
@@ -49,14 +48,111 @@
 
 \begin{document}
     \maketitle
+
+    \section{Part A}
     \begin{enumerate}
         \item Discuss the differences between DDL and DML. What operations would you typically expect to be available in each language? 
+        
+        \solu
+
+        DDL is for defining or modifying data structures or data schemas. DDL states the properties including table entities, attributes, relationships required for the application, index, users of a data base and . In DDL and SQL, we are expecting to have statements including \textbf{create, drop, alter}
+
+        DML is used for inserting, updating, selecting and deleting data in a database. 
+
         \item Describe the difference between data security and data integrity. 
+        
+        \solu
+
+        Data security is about protecting the database, the containing data and the management system from internal and external threats. Threats includes stealing data, actions without permissions, and internal abuse of data. However, data integrity is a property of data stored in database. Data integrity requires data to be consistent and correct. Also, to maintain data integrity, we need to do some senity check or set some constraints before operations and manipulations.
         \item What advantages do databases provide over early file-based approaches? Give at least three examples.
+        
+        \solu
+
+        \begin{enumerate}
+            \item File based system is difficult to access since files containing data are distributed on different machiens. While, databases provide a centerlized storage which provides an easier access and smaller duplications. For example, a company need to save duplicated files in different departments so that people from different departments have the access, which might lead to inconsistency and duplications.
+            \item File based system stores data in different formats. While, databases output data in the same format. Therefore, application developers need to parse files with different formats. However, with databases, developers only need to parse interact with one data format, which accelerates the development and reduces bugs and complexcity.
+            \item Databases have fixed queries while file based systems don't. Application developers do not need to implement the algorithm of the data operations and might reuse the queries during the development with databases.
+        \end{enumerate}
         \item What is concurrency control and why does a DBMS need a concurrency control facility?
+        
+        \solu
+
+        Concurrency control is the procedure for managing multiple users' changes to the database simultaneously without conflicting with each other. DBMS need a concurrency because multiple users are reading and writing at the same time and controlling such procedures makes sure user are not doing something conflicts with other users and keep the data correct.
+
         \item What is a transaction? Give an example of a transaction. 
-        \item What is meant by the term ‘client-server architecture’and what are the advantages of this approach? Compare the client-server architecture with two other architectures. 
+        
+        \solu
+
+        A transaction is a sequence of data operations. we can view transaction as a logical work request to the database.
+        
+        For example, updating the score of a student in CS3200 with nuid 123:
+
+        UPDATE cs3200\_score\\
+        SET score = 85\\
+        WHERE nuid=123;
+
+        \item What is meant by the term ‘client-server architecture’ and what are the advantages of this approach? Compare the client-server architecture with two other architectures. 
+        
+        \solu 
+
+        ``Client-server architecture" is dividing a system to 2 client and server. Clients manages user interface and run the applications. Server stores the databases and runs the DBMS. They are usually connected by internet.\\
+        The advantages include better performance, wider access to existing databases, possible reduction of client development and hardware cost, reduction in communication costs and increased consistency.
+
         \item  In the 2016 InfoWorld article “What eBay looks like under the hood” what problem did eBay have with their product catalog? How is this a database design problem? Compare eBay’s approach to the way in which Amazon allows third-party vendors to sell used books.
-        \item  The two assigned articles from the February issue of The Scientist both mention the building of Databases. How do these databasesfacilitate the scientific research discussed in each article? Is the rational for building a database in each case similar? Justify your answer.
+        
+        \solu
+
+        eBay is facing the problem of identifying the same products under different circumstances from enormous amount of providers. It is difficult to connect the same products since they are listed by different people with various discriptions. 
+
+        They designed a layer structured data on top of the free-form listing data to identify the same products. They have to create a database of all possible products so they can categorize all kinds of products. In terms of books, since books have a unique identifier: ISBN, Amazon can build a database according to existing ISBN data and easily identify the same book from different sellers. However, eBay might need a deeper layer of identification trees to help categorize and identify the same products from various providers.
+
+        \item  The two assigned articles from the February issue of The Scientist both mention the building of Databases. How do these databases facilitate the scientific research discussed in each article? Is the rational for building a database in each case similar? Justify your answer.
+        
+        In microbes, Knight and Gilbert is solving the problem of distributed storage of DNA code in different formats. They were acceping samples from all over the world and trying to sequence them under a uniformed protcol and store them in a centerlized database. They are more focusing on tacling the inconsistency and difficulties in protocol transformations. They built this database to regulate and centerlize the data storage and grant public accesses.
+
+        In chironomids, Lin is working hard on identify new species and genetic sequences. The article is emphasizing more on contributing to the database. The database helped scientists to compare species with species and possibly identify new ones. The rational for building the database is helping scientists to identify new species.
+
+        Both databases have the similar hope that they are helping scientists to access data with better conisstency and larger amount. While, Knight and Gilbert is more focusing on breaking the barriers between data from different researches and help the comparision of data. Lin is focusing on increasing the data and helping detecting new species.
     \end{enumerate}
+
+    \section{Part B}
+    In big data environments, analysts are constantly writing ad hoc database queries to obtain general table statistics for purposes of validation, trend analysis, and to simply gain a deeper understanding of their data. Suppose we had a .CSV text file listing bank customer loan applications. Each line includes data about the customer: age, marital status, education, account balance, and so on.  The last column indicates whether the customer was approved for the loan. \\ \\
+    The bank manager would like to know if customers with different marital status have, on average, significantly different account balances. In a programming language of your choice (or using pseudocode), write or describe a method that reads through the CSV line-by-line, and outputs the average account balance for customers in each marital status category. The equivalent SQL query, and expected output, is provided below.  (Your program will probably require more than three lines of code. Using Python pandas or R dataframes is not allowed – nice try!) 
+
+    \scalebox{0.99}{
+        \begin{algorithm}[H]
+            \caption{Reading CSV and Calculate average balance}
+            marital\_column = 0\\
+            balance\_column = 0\\
+            // read first line:\\
+            csv\_file = read\_file('loans.csv')\\
+            attr\_line = csv\_file.readline()\\
+            \For{i = 0 to length(attr\_line)}{
+                \If{attr\_line[i] == 'marital'}{
+                    marital\_column = i
+                }
+                \If{attr\_line[i] == 'balance'}{
+                    balance\_column = i
+                }
+            }
+            map: sum\_map // we can access data\_map by key\\
+            total\_line = 0 \\
+            // Read the data in csv file:\\
+            \While{csv\_file not end}{
+                total\_line += 1\\
+                line = csv\_file.readline()\\
+                marital\_stat = line[marital\_column]\\
+                \If {marital\_stat not in sum\_map}{
+                    sum\_map.insert(marital\_stat, line[balance\_column])
+                }\Else{
+                    sum\_map[marital\_stat] += line[balance\_column]
+                }
+            }
+            map avg\_map \\
+            \For{key in sum\_map.keys}{
+                avg\_map.insert(key, sum\_map[key] / total\_line)
+            }
+            \Return avg\_map
+        \end{algorithm}
+    }
 \end{document}
