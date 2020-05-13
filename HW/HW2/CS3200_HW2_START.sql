@@ -6,31 +6,43 @@
 -- Remember to change the inferred datatype for the chromosome field from INT to TEXT
 -- You should end up with a table containing 39,910 records
 
-
 -- Write a query to answer each of the following questions
 -- Save your script file as cs3200_hw2_lastname.sql
 -- Submit this file for your homework submission
 
 
-use gad;
+USE gad;
 
 -- 1a. (2.5 points)
 -- Write a query that verifies that you have imported 39,910 records 
+SELECT (SELECT COUNT(*)
+		FROM gad) = 39910;
 
 
 -- 1b. (2.5 points)
 -- Write a query that lists the different columns in your gad table
 -- Include a comment explaining why it was necessary to change the chromosome to a text field.
+SHOW COLUMNS FROM gad;
+-- The field chromosome is the label of a gene showing where it comes from, 
+-- but not a numerical property of the data entry. 
+-- We don't want to compare the value but just use this label to differ from other genes.
 
 
 -- 2. (5 points)
 -- What are the distinct disease classes referenced in this data?
 -- Output your list in alphabetical order
+SELECT DISTINCT disease_class
+FROM gad
+ORDER BY disease_class ASC;
 
 
 -- 3. (5 points)
 -- List all distinct phenotypes related to the disease class "IMMUNE"
 -- Output your list in alphabetical order
+SELECT DISTINCT phenotype
+FROM gad
+WHERE disease_class = 'IMMUNE'
+ORDER BY phenotype ASC;
 
 
 -- 4. (5 points)
@@ -39,8 +51,10 @@ use gad;
 -- Count any phenotype containing the substring "asthma"
 -- List each distinct record once
 -- Sort by gene symbol
-
-
+SELECT DISTINCT gene, gene_name, chromosome
+FROM gad
+WHERE association = 'Y' AND phenotype LIKE '%asthma%'
+ORDER BY gene ASC;
 
 
 -- 5. (5 points)
@@ -48,14 +62,19 @@ use gad;
 -- List all genes that are "G protein-coupled" receptors in alphabetical order by gene symbol
 -- Output the gene symbol, gene name, and chromosome
 -- (These genes are often the target for new drugs, so are of particular interest)
-
-
-
+SELECT gene, gene_name, chromosome
+FROM gad
+WHERE gene_name LIKE '%G protein-coupled%'
+ORDER BY gene;
 
 
 -- 6. (5 points)
 -- For genes on chromosome 3, what is the minimum, maximum DNA location
 -- Exclude cases where the dna_start value is 0
+SELECT MIN(dna_start) AS 'minimum DNA location',
+	   MAX(dna_end) AS 'maximum DNA location'
+FROM gad
+WHERE dna_start <> 0;
 
 
 -- 7 (10 points)
@@ -64,19 +83,37 @@ use gad;
 -- Ignore records where the year isn't valid. (Explore the year column to determine what constitutes a valid year.)
 -- Output the gene, min-year, max-year, and number of GAD records
 -- order by min-year, max-year, gene-name (3-level sorting)
-
-
+SELECT gene,
+	   gene_name,
+	   MIN(year) AS 'min_year',
+	   MAX(year) AS 'max_year',
+       COUNT(*)
+FROM gad
+WHERE year > 1900
+GROUP BY gene, gene_name
+ORDER BY min_year, max_year, gene_name;
 
 
 -- 8. (10 points)
 -- How many records are there for each gene?
 -- Output the gene symbol and name and the count of the number of records
 -- Order by the record count in descending order
+SELECT gene, gene_name, COUNT(*) AS 'record_count'
+FROM gad
+GROUP BY gene, gene_name
+ORDER BY record_count desc;
 
 
 -- 9. (10 points)
 -- Modify query 8 by considering only positive associations
 -- and limit output to records having at least 100 associations
+SELECT gene, gene_name, COUNT(*) AS 'record_count'
+FROM gad
+WHERE association = 'Y'
+GROUP BY gene, gene_name
+HAVING record_count >= 100
+ORDER BY record_count DESC;
+
 
 
 -- 10. (10 points)
@@ -84,6 +121,12 @@ use gad;
 -- Sort in descending order by count
 -- Show only the top five records
 -- Do NOT include cases where the population is blank
+SELECT population, COUNT(*) AS count
+FROM gad
+WHERE population <> ""
+GROUP BY population
+ORDER BY count DESC
+LIMIT 5;
 
 
 -- 11. (10 points)
@@ -94,6 +137,13 @@ use gad;
 -- Output the gene, gene_name, association (should always be 'Y'), phenotype, disease_class, and population
 -- Hint: Use a subselect in your WHERE class and the IN operator
 
+SELECT gene, gene_name, association, phenotype, disease_class, population
+FROM gad
+WHERE gene IN (SELECT distinct gene
+			   FROM gad
+               WHERE phenotype LIKE "%asthma%")
+	  AND association = 'Y'
+ORDER BY phenotype ASC;
 
 
 -- 12. (10 points)
@@ -102,7 +152,15 @@ use gad;
 -- in our output table produced by the previous query.
 -- Output just the phenotype, and a count of the number of occurrences for the top 5 phenotypes
 -- with the most records involving an asthma-linked gene (EXCLUDING asthma itself).
-
+SELECT phenotype, COUNT(*) as 'count'
+FROM gad
+WHERE gene IN (SELECT distinct gene
+			   FROM gad
+               WHERE phenotype LIKE "%asthma%")
+	  AND association = 'Y'
+      AND phenotype <> 'asthma'
+GROUP BY phenotype
+ORDER BY count DESC;
 
 
 -- 13. (10 points)
