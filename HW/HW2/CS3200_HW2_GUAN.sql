@@ -10,8 +10,8 @@
 -- Save your script file as cs3200_hw2_lastname.sql
 -- Submit this file for your homework submission
 
-
 USE gad;
+
 
 -- 1a. (2.5 points)
 -- Write a query that verifies that you have imported 39,910 records 
@@ -160,7 +160,8 @@ WHERE gene IN (SELECT distinct gene
 	  AND association = 'Y'
       AND phenotype <> 'asthma'
 GROUP BY phenotype
-ORDER BY count DESC;
+ORDER BY count DESC
+Limit 5;
 
 
 -- 13. (10 points)
@@ -168,10 +169,24 @@ ORDER BY count DESC;
 -- Do an internet search and answer the following questions - (You can put your answer right into this script as comments.)
 
 -- a) Does existing biomedical research support a connection between asthma and the disease you identified above?
-
+--    1. For type1 diabetes, some study suggest that "a prior diagnosis of asthma increases the risk of subsequent type 1 diabetes". 
+--       However, some more recent study also suggest that type 1 diabetes diagnosis first decreases the risk of subsequent asthma.
+--       source: https://www.patientcareonline.com/view/asthma-diagnosis-associated-type-1-diabetes
+--    2. For lung cancer, a study published on Oncotarget suggest that "prior asthma is significantly associated with lung cancer risk".
+--       This result is shown to be corrected in race groups including Caucasians and Asians. Also, both male and female patients with 
+--       asthma "showed increased risk for lung cancer".
+--       source: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5355290/
+--    3. For rheumatoid arthritis, a literature review in Tuberculosis & Respiratory Diseases indicates a strong relation between these 
+--       two diseases. source: https://www.rheumatologyadvisor.com/home/topics/rheumatoid-arthritis/rheumatoid-arthritis-and-asthma-is-there-a-link/
+--    4. For hypertension, a research from the New England Journal of Medicien suggest that there is a potential mechanistic links between hypertension
+--       and asthma. source: https://www.nejm.org/doi/full/10.1056/NEJMra1800345
+--    5. For breast cancer, there is an artical from Cancer Cause Control showing that there is no statistically significant
+--       relation between the two diseases.
+--       source: https://www.ncbi.nlm.nih.gov/pubmed/23443321
 
 -- b) Why might a drug company be interested in instances of such "overlapping" phenotypes?
-
+--    Some exisiting drug might help treat the related diseases. Also, the underlying mechanism of the two diseases might have some relations. 
+--    Thus help the development of the drug that treat the related diseases. 
 
 -- CONGRATULATIONS!!: YOU JUST DID SOME LEGIT DRUG DISCOVERY RESEARCH! :-)
 
