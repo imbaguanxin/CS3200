@@ -7,11 +7,11 @@ CREATE TABLE IF NOT EXISTS user (
 	user_id INT PRIMARY KEY AUTO_INCREMENT,
     password VARCHAR(50) NOT NULL,
     username VARCHAR(50) NOT NULL UNIQUE,
-    organization TINYINT NOT NULL,
+    organization TINYINT NOT NULL COMMENT "whether is a organization",
     handle VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(50) NOT NULL,
     profile VARCHAR(255) DEFAULT NULL,
-    hidden TINYINT NOT NULL DEFAULT 0
+    hidden TINYINT NOT NULL DEFAULT 0 COMMENT "whether hidden the profile; 0 means not hidden"
 );
 
 CREATE TABLE IF NOT EXISTS tweet (
@@ -54,6 +54,8 @@ CREATE TABLE IF NOT EXISTS like_tb (
 	CONSTRAINT fk_like_tb_tweet_id
 		FOREIGN KEY (tweet_id) REFERENCES tweet (tweet_id)
 );
+
+-- Inserting data
 
 INSERT INTO user (password, username, organization, handle, email)
 VALUES ('gqy6q$;A@<', 'alice', 0, 'alice', 'alice@gmail.com'),
@@ -98,7 +100,8 @@ VALUES (1, 4), (2, 4), (3, 4), (4, 5), (5, 4), (1, 2), (6, 5);
 
 INSERT INTO like_tb
 VALUES (1, 4), (2, 4), (3, 4), (4, 5), (2, 6), 
-(3, 6), (4, 6), (1, 7), (2, 7), (1, 8), (1, 9), (2, 9), (3, 9), (4, 9), (5, 9);
+(3, 6), (4, 6), (1, 7), (2, 7), (1, 8), (1, 9), 
+(2, 9), (3, 9), (4, 9), (5, 9);
 
 
 -- Database Validation
@@ -112,21 +115,23 @@ LIMIT 1;
 
 -- For one user, list the five most recent tweets by that user, from newest to oldest. 
 -- Include only tweets containing the hashtag “#NEU”
+
+-- Here I choose user with user_id = 1
 SELECT * 
 FROM tweet
 WHERE tweet_id in (SELECT tweet_id
 				   FROM tweet_hashtag
-				   WHERE 
-						hashtag_id = (SELECT hashtag_id
-									  FROM hashtag
-									  WHERE hashtag_content = 'NEU')
-						AND
-						tweet_id in (SELECT tweet_id 
-									 FROM tweet
-									 WHERE user_id = 1));
+				   WHERE hashtag_id = (SELECT hashtag_id
+						  			   FROM hashtag
+									   WHERE hashtag_content = 'NEU')
+				   AND tweet_id in (SELECT tweet_id 
+									FROM tweet
+									WHERE user_id = 1))
+ORDER BY time_stamp DESC;
 
 -- What are the most popular hashtags? Sort from most popular to least popular. 
--- Output the hashtag_id and the number of times that hashtag was used in a tweet. 
+-- Output the hashtag_id and the number of times that hashtag was used in a tweet.
+-- Rank your output by number of occurrences in descending order 
 SELECT hashtag_id, count(*)
 FROM tweet_hashtag
 GROUP BY hashtag_id
@@ -141,11 +146,6 @@ CREATE VIEW tweet_id_one_hashtag AS
 SELECT count(*)
 FROM tweet_id_one_hashtag;
 DROP VIEW tweet_id_one_hashtag;
-
--- CREATE VIEW tweet_id_one_hastag AS (SELECT tweet_id, count(*)
---  FROM tweet_hashtag	
---  GROUP BY tweet_id
---  WHERE count(*) = 1);
 
 -- What is the most liked tweet? Output the tweet attributes.
 CREATE VIEW max_liked_tweet AS
