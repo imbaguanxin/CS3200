@@ -165,8 +165,44 @@ order by avg_rating desc;
 
 
 -- who likes impressionist paintings the most?
+select user.user_id, user.name, avg(rating) 
+from rating join user using (user_id)
+join painting using (painting_id)
+join artist using (artist_id)
+join genre using (genre_id)
+where genre_name = 'Impressionism'
+group by user.user_id, user.name
+order by avg(rating) desc
+limit 1;
+
+-- For each artist, show name, genre, # paintings, # rating, avg rating
+select artist.name, 
+       genre_name as 'genre',
+       count(distinct painting_id) as 'num_paintings',
+       count(rating) as 'num_rating',
+       ifnull(round(avg(rating), 2), 'N/A') as 'avg_rating'
+from artist left join painting using (artist_id)
+left join genre using (genre_id)
+left join rating using (painting_id)
+group by artist.artist_id, artist.name;
+
+-- How many paintings did each artist paint in the 1870's
+select *
+from artist a left join painting p on 
+	(a.artist_id = p.artist_id and p.year between 1870 and 1879);
+
+select a.artist_id, count(painting_id)
+from artist a left join painting p on 
+	(a.artist_id = p.artist_id and p.year between 1870 and 1879)
+group by a.artist_id;
 
 
+-- self joins:
+select *
+from artist a join artist b
+where a.name != b.name 
+and a.year < b.year
+and a.genre_id = b.genre_id;
 
 
 
