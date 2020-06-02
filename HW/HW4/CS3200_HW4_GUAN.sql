@@ -175,7 +175,7 @@ where specialty_name = 'GENERAL PRACTITIONER';
 -- Order by the mentor, then the mentee last name
 select d1.doctor_name as "mentor", d2.doctor_name as "mentee", specialty_name
 from doctor d1 join doctor d2 on (d1.specialty_id = d2.specialty_id and d1.doctor_id != d2.doctor_id)
-join specialty on (d1.specialty_id = specialty.specialty_id)
+left join specialty on (d1.specialty_id = specialty.specialty_id)
 order by mentor, mentee;
 
 
@@ -183,7 +183,7 @@ order by mentor, mentee;
 -- 15. What has the youngest patient been diagnosed with?
 -- Output the disease and date of diagnosis
 -- Order earliest to most recent diagnosis
-select patient_name, disease_name, diagnosis_date
+select patient_name, dob, disease_name, diagnosis_date
 from patient left join diagnosis using (patient_id)
 join disease using (disease_id)
 where patient_id = (
