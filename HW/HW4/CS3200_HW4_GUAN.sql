@@ -31,7 +31,11 @@ select patient_name, flushot, doctor_name, diagnosis_date
 from patient left join diagnosis using (patient_id)
 left join disease using (disease_id)
 left join doctor using (doctor_id)
-where disease_name = 'Flu'
+where patient_id in (
+	select patient_id
+	from diagnosis left join disease using (disease_id)
+	where disease_name = 'Flu'
+)
 order by diagnosis_date;
 
 
