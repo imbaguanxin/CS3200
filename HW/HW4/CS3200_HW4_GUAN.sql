@@ -48,7 +48,8 @@ order by diagnosis_date;
 select 
 	patient_id, 
 	patient_name, 
-    weight, height, 
+    weight, 
+    height, 
     round(703 * weight / height / height, 1) as "BMI"
 from patient
 order by BMI desc;
@@ -59,8 +60,7 @@ order by BMI desc;
 -- the patient_id and the text "Recommend Diet and Exercise"
 -- for any patient with a BMI greater than 25.0.
 insert into recommendation
-select 
-	patient_id, "Recommend Diet and Exercise"
+select patient_id, "Recommend Diet and Exercise"
 from patient
 where round(703 * weight / height / height, 1) > 25.0;
 
@@ -123,10 +123,9 @@ from doctor right join specialty using (specialty_id);
 -- The trick is that one of your join tables can be the result of a select!
 select disease_name, count(diagnosis_date) as 'num_diagnosis'
 from disease d left join diagnosis a on 
-(d.disease_id = a.disease_id and diagnosis_date between '2017-01-01' and '2017-12-31')
+(d.disease_id = a.disease_id and year(diagnosis_date) = 2017)
 group by disease_name
 order by num_diagnosis desc;
-
 
 
 -- 11. For each doctor that is the PCP of at least one patient
@@ -187,9 +186,8 @@ order by mentor, mentee;
 -- 15. What has the youngest patient been diagnosed with?
 -- Output the disease and date of diagnosis
 -- Order earliest to most recent diagnosis
-select patient_name, dob, disease_name, diagnosis_date
-from patient left join diagnosis using (patient_id)
-join disease using (disease_id)
+select disease_name, diagnosis_date
+from diagnosis left join disease using (disease_id)
 where patient_id = (
 	select patient_id
 	from patient
