@@ -11,4 +11,4 @@ if __name__ == '__main__':
     cnx = mysql.connector.connect(**root_config)
     cursor = cnx.cursor()
 
-    query = ('SELECT * FROM diagnosis')
+    query = 'SELECT * FROM diagnosis'
