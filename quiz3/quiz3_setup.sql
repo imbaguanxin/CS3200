@@ -230,52 +230,83 @@ use futbol;
 
 -- 1. Who scored the most goals?
 -- Output just the name of the player
-
+SELECT player_name
+FROM player
+ORDER BY goals DESC
+LIMIT 1;
 
 
 -- 2. how many matchups ended in a draw?
-
+SELECT count(*)
+FROM matchup
+WHERE home_goals = visitor_goals;
 
 
 -- 3. How many matchups were blowouts?
 -- Let's say that a blowout is a game where the goal differential is GREATER THAN 3
-
+SELECT count(*)
+FROM matchup
+WHERE ABS(home_goals - visitor_goals) > 3;
 
 -- 4. How many total goals were scored by players who do NOT wear a jersey that's a primary color
 -- Primary colors are red, blue, and yellow
-
+SELECT sum(goals)
+FROM player left join team using (team_id)
+WHERE NOT (color in ('red', 'blue', 'yellow'));
 
 -- 5. How many goals were scored by players on teams from Chelsea?
-
+SELECT sum(goals)
+FROM player
+WHERE team_id in (
+	SELECT team_id
+    FROM team join town using (town_id)
+    WHERE town_name = 'Chelsea'
+);
 
 -- 6. What team does Soumya play for?
 -- Output the name of the team, and the town that the team is from
-
+SELECT team_name, town_name
+FROM player p join team t on (p.player_name = 'Soumya' and p.team_id = t.team_id)
+join town using (town_id);
 
 
 -- 7. For each matchup, list the home team name, visitor team name, and total goals scored by either team.
 -- Order matchups by total goals scored
-
+SELECT t1.team_name as home_team_name, t2.team_name as visitor_team_name, home_goals + visitor_goals as total_goals
+FROM matchup m join team t1 on (m.home_id = t1.team_id)
+join team t2 on (m.visitor_id = t2.team_id)
+order by total_goals;
 
 
 -- 8. Not counting goal keepers, what TWO positions scored the FEWEST goals?
 -- Output the name of the position and the number of goals scored by that position
 -- HINT: Start by figuring out how many total goals are scored by each position
-
+SELECT position_name, sum(goals) as goal_sum
+FROM player join position using (position_id)
+GROUP BY position_name
+HAVING position_name <> 'goalkeeper'
+ORDER BY goal_sum
+LIMIT 2;
 
 
 -- 9. How many teams come from each town?
 -- Include towns that have no teams
 -- Output town name and number of teams sorted from most teams to fewest teams
-
+SELECT town_name, count(team_id) as num_team
+FROM town left join team using (town_id)
+GROUP BY town_name
+ORDER BY num_team DESC;
 
 
 -- 10. How many players play for each position
 -- Include in your table positions that have no players.
 -- Only list positions that end in the letter "r".
 -- Sort your output by the number of players in that position descending followed by the position name.
-
-
+SELECT position_name, count(player_id) as num_player
+FROM position left join player using (position_id)
+GROUP BY position_name
+HAVING position_name like "%r"
+ORDER BY num_player DESC;
 
 
 -- 11. What players were above average in terms of goals scored?
@@ -283,18 +314,37 @@ use futbol;
 -- Order by goals scored descending.
 -- DO NOT INCLUDE GOAL KEEPERS IN COMPUTING THE OVERALL AVERAGE!
 -- HINT: Start by figuring out what was the average # of goals scored by non-goalkeepeers.
+SELECT player_name, goals
+FROM player
+WHERE goals > (
+	SELECT avg(goals)
+    FROM player join position using (position_id)
+    WHERE position_name <> 'goalkeeper'
+)
+ORDER BY goals DESC;
 
-
+-- SELECT goals FROM player;
+-- SELECT avg(goals)
+-- FROM player join position using (position_id)
+-- WHERE position_name <> 'goalkeeper';
 
 
 -- 12. List every player name, their position, their team, and the town that the team represents
 -- Order our output by town, then team, then player
-
+SELECT player_name, position_name, team_name, town_name
+FROM player left join position using (position_id)
+left join team using (team_id)
+left join town using (town_id)
+ORDER BY town_name, team_name, player_name;
 
 
 -- 13. Who is the Striker for the team from Manchester?
 -- Give the name and the number of goals she scored (That was a hint!)
-
+SELECT player_name, goals
+FROM player left join team using (team_id)
+left join position using (position_id)
+left join town using (town_id)
+WHERE town_name = 'Manchester' and position_name = 'striker';
 
 
 
@@ -303,12 +353,34 @@ use futbol;
 -- Include only teams in your output with an average greater than or equal to 3.0 goals / team.
 -- In calculating the average, you may include goal keepers, but think about how the query
 -- would be different if we had to exclude goal keepers.
+SELECT team_name, min(goals), max(goals), avg(goals) as avg_goal
+FROM player join team using (team_id)
+group by team_name
+HAVING avg_goal > 3.0;
 
-
-
+SELECT team_name, min(goals), max(goals), avg(goals) as avg_goal
+FROM player p join team t on (
+	p.team_id = t.team_id 
+	and p.position_id <> (
+		SELECT position_id
+        FROM position
+        WHERE position_name = 'goalkeeper'
+    ))
+group by team_name
+HAVING avg_goal > 3.0;
 
 -- 15. How many games did the Giants lose?
 -- This one is a little tricky. Using a JOIN, find matchups where the giants are either the home team or the visiting team
 -- If the giants are the home team we want home_goals < visitor_goals. Similarly, if the giants are the visiting team
 -- we want matchups where the visiting team scores fewer goals.
 -- Finally, count the rows that meet all these conditions!
+SELECT count(*)
+FROM (
+	SELECT *
+	FROM matchup m join team t on (m.home_id = t.team_id)
+	WHERE team_name = 'Giants' AND home_goals < visitor_goals
+	UNION
+	SELECT *
+	FROM matchup m join team t on (m.visitor_id = t.team_id)
+	WHERE team_name = 'Giants' AND visitor_goals < home_goals
+) as won_matches;
