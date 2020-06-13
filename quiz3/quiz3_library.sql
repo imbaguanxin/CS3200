@@ -184,17 +184,24 @@ order by late_count desc;
 
 
 -- q9
--- select 
--- 	user_name, 
--- 	sum(datediff(due_dt, return_dt) * 0.1) 
--- from user u left join borrow b on (u.user_id = b.user_id and b.due_dt < b.return_dt)
+select 
+	user_name, 
+	sum(datediff(due_dt, return_dt) * 0.1) 
+from user u left join borrow b on (u.user_id = b.user_id and b.due_dt < b.return_dt)
+group by u.user_id;
+
+
+select 
+	user_name, 
+	datediff(due_dt, return_dt)
+from user u left join borrow b on (u.user_id = b.user_id and b.due_dt < b.return_dt);
 -- group by u.user_id;
 
--- select user_id, user_name, sum(amount) as paid_amount
--- from user left join payment using (user_id)
--- group by user_id;
+select user_id, user_name, sum(amount) as paid_amount
+from user left join payment using (user_id)
+group by user_id;
 
-select user_id, user_name, - IFNULL(fine_amount + sum(amount), 0) as dollar_owed 
+select user_name, - IFNULL(fine_amount + sum(amount), 0) as dollar_owed 
 from (
 	select 
 		u.user_id,
@@ -224,7 +231,7 @@ group by user_id;
 
 -- select * from crew;
 
-select c1.name, c2.name as reports_to
+select c1.name as crew_name, c2.name as reports_to
 from crew c1 left join crew c2 on (c1.reports_to = c2.crew_id); 
 
 -- q11
