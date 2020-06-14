@@ -118,3 +118,8 @@ from vn_staff_relation r join staff_position p on (r.position = p.title)
 join vn using (vn_id)
 join staff using (staff_id);
 
+-- ------------------------------------------
+-- language:
+-- some language, release relation is not good.
+select distinct(language_code) from release_lang;
+

@@ -3,6 +3,7 @@
 -- -----------------------------------------------------
 DROP SCHEMA IF EXISTS vn_collection;
 CREATE SCHEMA IF NOT EXISTS vn_collection DEFAULT CHARACTER SET utf8mb4;
+ALTER SCHEMA `vndb_dev`  DEFAULT CHARACTER SET utf8mb4;
 USE vn_collection;
 
 -- -----------------------------------------------------
@@ -12,9 +13,9 @@ DROP TABLE IF EXISTS vn;
 
 CREATE TABLE IF NOT EXISTS vn (
     vn_id INT PRIMARY KEY ,
-    en_title VARCHAR(250) NOT NULL DEFAULT '',
-    original_title VARCHAR(250) NOT NULL DEFAULT '',
-    alias VARCHAR(250) NOT NULL DEFAULT '',
+    en_title VARCHAR(500) NOT NULL DEFAULT '',
+    original_title VARCHAR(500) NULL DEFAULT '',
+    alias VARCHAR(500) NULL DEFAULT '',
     intro TEXT NULL,
     INDEX idx_vn_vn_id (vn_id))
 ENGINE = InnoDB;
@@ -27,8 +28,8 @@ DROP TABLE IF EXISTS vn_char;
 
 CREATE TABLE IF NOT EXISTS vn_char (
     char_id INT PRIMARY KEY,
-    en_name VARCHAR(250) NOT NULL DEFAULT '',
-    original_name VARCHAR(250) NOT NULL DEFAULT '',
+    en_name VARCHAR(500) NOT NULL DEFAULT '',
+    original_name VARCHAR(500) NULL DEFAULT '',
     alias VARCHAR(500) NULL DEFAULT '',
     intro TEXT NULL,
     gender VARCHAR(50) NULL DEFAULT 'unknown',
@@ -74,10 +75,10 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table lang
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS lang ;
+DROP TABLE IF EXISTS lang;
 
 CREATE TABLE IF NOT EXISTS lang (
-    language_code VARCHAR(2) PRIMARY KEY ,
+    language_code VARCHAR(10) PRIMARY KEY ,
     language_name VARCHAR(250) NOT NULL)
 ENGINE = InnoDB;
 
@@ -89,9 +90,9 @@ DROP TABLE IF EXISTS vn_release ;
 
 CREATE TABLE IF NOT EXISTS vn_release (
     release_id INT PRIMARY KEY ,
-    en_title VARCHAR(250) NULL,
-    original_title VARCHAR(250) NULL,
-    website VARCHAR(250) NULL,
+    en_title VARCHAR(500) NOT NULL,
+    original_title VARCHAR(500) NULL,
+    website VARCHAR(500) NULL,
     note TEXT NULL,
     platform VARCHAR(10) NULL,
     vn_id INT NULL,
@@ -110,11 +111,11 @@ CREATE TABLE IF NOT EXISTS producer (
     producer_id INT PRIMARY KEY,
     type VARCHAR(50) NOT NULL DEFAULT 'co',
     en_name VARCHAR(500) NOT NULL DEFAULT '',
-    original_name VARCHAR(500) NOT NULL DEFAULT '',
+    original_name VARCHAR(500) NULL DEFAULT '',
     alias VARCHAR(500) NULL,
     website VARCHAR(250) NULL,
     intro TEXT NULL,
-    language_code VARCHAR(2) NULL,
+    language_code VARCHAR(10) NULL,
     INDEX idx_producer_producer_id (producer_id),
     CONSTRAINT producer_fk_language_code FOREIGN KEY (language_code) REFERENCES lang (language_code))
 ENGINE = InnoDB;
@@ -136,9 +137,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table position
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS position;
+DROP TABLE IF EXISTS staff_position;
 
-CREATE TABLE IF NOT EXISTS position (
+CREATE TABLE IF NOT EXISTS staff_position (
   position_id INT PRIMARY KEY ,
   title VARCHAR(250) NULL,
   intro TEXT NULL)
@@ -154,13 +155,13 @@ CREATE TABLE IF NOT EXISTS vn_staff_relation (
     vn_id INT NOT NULL,
     staff_id INT NOT NULL,
     position_id INT NULL,
-    NOTE TEXT NULL,
+    note TEXT NULL,
     INDEX idx_vn_staff_relation_staff_id (staff_id),
     INDEX idx_vn_staff_relation_vn_id (vn_id),
     INDEX idx_vn_staff_relation_position_id (position_id),
     CONSTRAINT vn_staff_relation_fk_vn_id FOREIGN KEY (vn_id) REFERENCES vn (vn_id),
     CONSTRAINT vn_staff_relation_fk_staff_id FOREIGN KEY (staff_id)REFERENCES staff (staff_id),
-    CONSTRAINT vn_staff_relation_fk_position_id FOREIGN KEY (position_id)REFERENCES position (position_id))
+    CONSTRAINT vn_staff_relation_fk_position_id FOREIGN KEY (position_id)REFERENCES staff_position (position_id))
 ENGINE = InnoDB;
 
 
@@ -186,7 +187,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS lang_vn_release_relation;
 
 CREATE TABLE IF NOT EXISTS lang_vn_release_relation(
-    language_code INT NOT NULL,
+    language_code VARCHAR(10) NOT NULL,
     release_id INT NOT NULL,
     CONSTRAINT lang_vn_release_relation_fk_language_code FOREIGN KEY (language_code) REFERENCES lang (language_code),
     CONSTRAINT lang_vn_release_relation_fk_release_id FOREIGN KEY (release_id) REFERENCES vn_release (release_id))
