@@ -2,6 +2,7 @@
 .idea/
 *.DS_Store
 vndb_project/vn_dump
+.ipynb_checkpoints
 # Created by https://www.gitignore.io/api/macos,pycharm,intellij
 # Edit at https://www.gitignore.io/?templates=macos,pycharm,intellij
 

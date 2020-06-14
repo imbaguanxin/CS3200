@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS vn (
     en_title VARCHAR(250) NOT NULL DEFAULT '',
     original_title VARCHAR(250) NOT NULL DEFAULT '',
     alias VARCHAR(250) NOT NULL DEFAULT '',
-    intro TEXT NULL)
+    intro TEXT NULL,
+    INDEX idx_vn_vn_id (vn_id))
 ENGINE = InnoDB;
 
 
@@ -28,7 +29,7 @@ CREATE TABLE IF NOT EXISTS vn_char (
     char_id INT PRIMARY KEY,
     en_name VARCHAR(250) NOT NULL DEFAULT '',
     original_name VARCHAR(250) NOT NULL DEFAULT '',
-    alias VARCHAR(250) NULL DEFAULT '',
+    alias VARCHAR(500) NULL DEFAULT '',
     intro TEXT NULL,
     gender VARCHAR(50) NULL DEFAULT 'unknown',
     b_month INT NULL DEFAULT 0,
@@ -36,7 +37,8 @@ CREATE TABLE IF NOT EXISTS vn_char (
     height INT NULL,
     weight INT NULL,
     blood_type VARCHAR(7) NULL DEFAULT 'unknown',
-    age INT NULL)
+    age INT NULL,
+    INDEX idx_vn_char_char_id (char_id))
 ENGINE = InnoDB;
 
 
@@ -50,7 +52,8 @@ CREATE TABLE IF NOT EXISTS staff (
     gender VARCHAR(7) NULL DEFAULT 'unknown',
     intro TEXT NULL,
     website VARCHAR(250) NULL,
-    twitter VARCHAR(250) NULL)
+    twitter VARCHAR(250) NULL,
+    INDEX idx_staff_staff_id (staff_id))
 ENGINE = InnoDB;
 
 
@@ -90,10 +93,9 @@ CREATE TABLE IF NOT EXISTS vn_release (
     original_title VARCHAR(250) NULL,
     website VARCHAR(250) NULL,
     note TEXT NULL,
+    platform VARCHAR(10) NULL,
     vn_id INT NULL,
-    language_code VARCHAR(2) NULL,
     CONSTRAINT vn_release_fk_vn FOREIGN KEY (vn_id) REFERENCES vn(vn_id),
-    CONSTRAINT vn_release_fk_language FOREIGN KEY (language_code) REFERENCES lang (language_code),
     INDEX idx_vn_release_release_id (release_id),
     INDEX idx_vn_release_vn_id (vn_id))
 ENGINE = InnoDB;
@@ -159,6 +161,35 @@ CREATE TABLE IF NOT EXISTS vn_staff_relation (
     CONSTRAINT vn_staff_relation_fk_vn_id FOREIGN KEY (vn_id) REFERENCES vn (vn_id),
     CONSTRAINT vn_staff_relation_fk_staff_id FOREIGN KEY (staff_id)REFERENCES staff (staff_id),
     CONSTRAINT vn_staff_relation_fk_position_id FOREIGN KEY (position_id)REFERENCES position (position_id))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table char_vn_relation
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS char_vn_relation;
+
+CREATE TABLE IF NOT EXISTS char_vn_relation(
+    char_id INT NOT NULL,
+    vn_id INT NOT NULL,
+    role VARCHAR(50),
+    INDEX idx_char_vn_relation_fk_char_id (char_id),
+    INDEX idx_char_vn_relation_fk_vn_id (vn_id),
+    CONSTRAINT char_vn_relation_fk_char_id FOREIGN KEY (char_id) REFERENCES vn_char (char_id),
+    CONSTRAINT char_vn_relation_fk_vn_id FOREIGN KEY (vn_id) REFERENCES vn (vn_id))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table lang_vn_release_relation
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS lang_vn_release_relation;
+
+CREATE TABLE IF NOT EXISTS lang_vn_release_relation(
+    language_code INT NOT NULL,
+    release_id INT NOT NULL,
+    CONSTRAINT lang_vn_release_relation_fk_language_code FOREIGN KEY (language_code) REFERENCES lang (language_code),
+    CONSTRAINT lang_vn_release_relation_fk_release_id FOREIGN KEY (release_id) REFERENCES vn_release (release_id))
 ENGINE = InnoDB;
 
 
