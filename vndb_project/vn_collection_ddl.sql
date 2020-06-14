@@ -1,0 +1,164 @@
+-- -----------------------------------------------------
+-- Schema vndb
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS vn_collection;
+CREATE SCHEMA IF NOT EXISTS vn_collection DEFAULT CHARACTER SET utf8mb4;
+USE vn_collection;
+
+-- -----------------------------------------------------
+-- Table vn
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS vn;
+
+CREATE TABLE IF NOT EXISTS vn (
+    vn_id INT PRIMARY KEY ,
+    en_title VARCHAR(250) NOT NULL DEFAULT '',
+    original_title VARCHAR(250) NOT NULL DEFAULT '',
+    alias VARCHAR(250) NOT NULL DEFAULT '',
+    intro TEXT NULL)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table vn_char
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS vn_char;
+
+CREATE TABLE IF NOT EXISTS vn_char (
+    char_id INT PRIMARY KEY,
+    en_name VARCHAR(250) NOT NULL DEFAULT '',
+    original_name VARCHAR(250) NOT NULL DEFAULT '',
+    alias VARCHAR(250) NULL DEFAULT '',
+    intro TEXT NULL,
+    gender VARCHAR(50) NULL DEFAULT 'unknown',
+    b_month INT NULL DEFAULT 0,
+    b_day INT NULL DEFAULT 0,
+    height INT NULL,
+    weight INT NULL,
+    blood_type VARCHAR(7) NULL DEFAULT 'unknown',
+    age INT NULL)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table staff
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS staff;
+
+CREATE TABLE IF NOT EXISTS staff (
+    staff_id INT PRIMARY KEY,
+    gender VARCHAR(7) NULL DEFAULT 'unknown',
+    intro TEXT NULL,
+    website VARCHAR(250) NULL,
+    twitter VARCHAR(250) NULL)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table staff_stage_name
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS staff_stage_name;
+
+CREATE TABLE IF NOT EXISTS staff_stage_name (
+    staff_stage_name_id INT PRIMARY KEY,
+    en_stage_name VARCHAR(250) NULL,
+    original_stage_name VARCHAR(250) NULL,
+    staff_id INT NOT NULL,
+    CONSTRAINT staff_stage_name_fk_staff_id FOREIGN KEY (staff_id) REFERENCES staff (staff_id))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table lang
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS lang ;
+
+CREATE TABLE IF NOT EXISTS lang (
+    language_code VARCHAR(2) PRIMARY KEY ,
+    language_name VARCHAR(250) NOT NULL)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table vn_release
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS vn_release ;
+
+CREATE TABLE IF NOT EXISTS vn_release (
+    release_id INT PRIMARY KEY ,
+    en_title VARCHAR(250) NULL,
+    original_title VARCHAR(250) NULL,
+    website VARCHAR(250) NULL,
+    note TEXT NULL,
+    vn_id INT NULL,
+    language_code VARCHAR(2) NULL,
+    CONSTRAINT vn_release_fk_vn FOREIGN KEY (vn_id) REFERENCES vn(vn_id),
+    CONSTRAINT vn_release_fk_language FOREIGN KEY (language_code) REFERENCES lang (language_code),
+    INDEX idx_vn_release_release_id (release_id),
+    INDEX idx_vn_release_vn_id (vn_id))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table producer
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS producer ;
+
+CREATE TABLE IF NOT EXISTS producer (
+    producer_id INT PRIMARY KEY,
+    type VARCHAR(50) NOT NULL DEFAULT 'co',
+    en_name VARCHAR(500) NOT NULL DEFAULT '',
+    original_name VARCHAR(500) NOT NULL DEFAULT '',
+    alias VARCHAR(500) NULL,
+    website VARCHAR(250) NULL,
+    intro TEXT NULL,
+    language_code VARCHAR(2) NULL,
+    INDEX idx_producer_producer_id (producer_id),
+    CONSTRAINT producer_fk_language_code FOREIGN KEY (language_code) REFERENCES lang (language_code))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table vn_producer_relation
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS vn_producer_relation ;
+
+CREATE TABLE IF NOT EXISTS vn_producer_relation (
+    vn_id INT NOT NULL,
+    producer_id INT NOT NULL,
+    CONSTRAINT vn_producer_relation_fk_vn FOREIGN KEY (vn_id) REFERENCES vn (vn_id),
+    CONSTRAINT vn_producer_relation_fk_producer_id FOREIGN KEY (producer_id) REFERENCES producer (producer_id))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table position
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS position;
+
+CREATE TABLE IF NOT EXISTS position (
+  position_id INT PRIMARY KEY ,
+  title VARCHAR(250) NULL,
+  intro TEXT NULL)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table vn_staff_relation
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS vn_staff_relation ;
+
+CREATE TABLE IF NOT EXISTS vn_staff_relation (
+    vn_id INT NOT NULL,
+    staff_id INT NOT NULL,
+    position_id INT NULL,
+    NOTE TEXT NULL,
+    INDEX idx_vn_staff_relation_staff_id (staff_id),
+    INDEX idx_vn_staff_relation_vn_id (vn_id),
+    INDEX idx_vn_staff_relation_position_id (position_id),
+    CONSTRAINT vn_staff_relation_fk_vn_id FOREIGN KEY (vn_id) REFERENCES vn (vn_id),
+    CONSTRAINT vn_staff_relation_fk_staff_id FOREIGN KEY (staff_id)REFERENCES staff (staff_id),
+    CONSTRAINT vn_staff_relation_fk_position_id FOREIGN KEY (position_id)REFERENCES position (position_id))
+ENGINE = InnoDB;
+
+
