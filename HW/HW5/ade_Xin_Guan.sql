@@ -47,7 +47,7 @@ begin
     
     -- patient information
 	select patient_id, TIMESTAMPDIFF(YEAR, dob, CURDATE()), is_pregnant, weight
-    into patient_id_var, age_var, is_pregnant_var,weight_var
+    into patient_id_var, age_var, is_pregnant_var, weight_var
     from patient
     where patient_name = patient_name_param;
     
@@ -84,6 +84,7 @@ begin
                                                and patient_id = patient_id_var)
 	left join medication m on (i.medication_1 = m.medication_id)
     limit 1;
+    
 	if (ddi_medication is not null) or (length(ddi_medication) > 0) then
 		select concat(medication_name_param, ' interacts with ', ddi_medication, ' currently prescribed to ', patient_name_param) into message;
         signal sqlstate 'HY002' set message_text = message;
@@ -156,7 +157,6 @@ call prescribe('Jones', 'Dr.Marcus', 'Forgeta', 2);
 
 -- Age restriction
 call prescribe('BillyTheKid', 'Dr.Marcus', 'Muscula', 1);
-
 
 -- Drug interaction
 call prescribe('Williams', 'Dr.Marcus', 'Sadza', 1);

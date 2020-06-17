@@ -123,3 +123,29 @@ join staff using (staff_id);
 -- some language, release relation is not good.
 select distinct(language_code) from release_lang;
 
+
+-- ============================================
+-- trait
+-- data consistency
+-- I need:
+select char_id, trait_id
+from trait_char_relation join trait using (trait_id)
+join vn_char using (char_id);
+
+-- select r.char_id, r.trait_id
+-- from (
+-- 	select * from trait where searchable = 't'
+-- ) as t join trait_char_relation r on (r.trait_id = t.trait_id)
+-- join vn_char v on (v.char_id = r.char_id)
+-- where searchable = 't';
+
+
+
+-- -------------------------------
+-- tags of vn
+-- data consistency and vote
+select count(*) from tag where searchable = 't';
+select r.tag_id, r.vn_id, count(*) as vote from tag_vn_relation r join (
+	select * from tag where searchable = 't'
+) as t on (r.tag_id = t.tag_id)
+group by tag_id, vn_id;

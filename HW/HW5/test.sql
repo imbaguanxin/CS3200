@@ -59,8 +59,7 @@ begin
     
     -- medication information
 	select medication_id, take_under_12, take_if_pregnant, mg_per_pill, max_mg_per_10kg
-    into medication_id_var, take_under_12_var, take_if_pregnant_var, 
-		 mg_per_pill_var,max_mg_per_10kg_var
+    into medication_id_var, take_under_12_var, take_if_pregnant_var, mg_per_pill_var, max_mg_per_10kg_var
     from medication
     where medication_name = medication_name_param;
     -- check age of patient
@@ -185,7 +184,16 @@ where patient_id = 4;
 
 select * from recommendation;
 
+update patient
+set weight = 200
+where patient_id = 1; 
+
+update patient
+set is_pregnant = False
+where patient_id = 3;
+
 insert into prescription (medication_id, patient_id, doctor_id, ppd) values
 (9, 4, 1, 1), (4, 4, 1, 1), (2, 4, 1, 1);
 
 update patient set is_pregnant = True where patient_id = 4;
+select * from prescription where patient_id = 4;

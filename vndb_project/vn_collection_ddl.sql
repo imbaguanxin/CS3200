@@ -1,9 +1,9 @@
 -- -----------------------------------------------------
--- Schema vndb
+-- Schema vn_collection
 -- -----------------------------------------------------
 DROP SCHEMA IF EXISTS vn_collection;
 CREATE SCHEMA IF NOT EXISTS vn_collection DEFAULT CHARACTER SET utf8mb4;
-ALTER SCHEMA `vndb_dev`  DEFAULT CHARACTER SET utf8mb4;
+ALTER SCHEMA vn_collection  DEFAULT CHARACTER SET utf8mb4;
 USE vn_collection;
 
 -- -----------------------------------------------------
@@ -191,6 +191,56 @@ CREATE TABLE IF NOT EXISTS lang_vn_release_relation(
     release_id INT NOT NULL,
     CONSTRAINT lang_vn_release_relation_fk_language_code FOREIGN KEY (language_code) REFERENCES lang (language_code),
     CONSTRAINT lang_vn_release_relation_fk_release_id FOREIGN KEY (release_id) REFERENCES vn_release (release_id))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table trait
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS trait;
+
+CREATE TABLE IF NOT EXISTS trait(
+    trait_id INT PRIMARY KEY,
+    trait_name VARCHAR(500) NOT NULL,
+    trait_alias VARCHAR(500) NULL,
+    trait_description TEXT NULL)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table tag
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS tag;
+
+CREATE TABLE IF NOT EXISTS tag(
+    tag_id INT PRIMARY KEY,
+    tag_name VARCHAR(500) NOT NULL,
+    tag_description TEXT NULL)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table trait_char_relation
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS trait_char_relation;
+
+CREATE TABLE IF NOT EXISTS trait_char_relation(
+    trait_id INT NOT NULL,
+    char_id INT NOT NULL,
+    CONSTRAINT trait_char_relation_fk_trait_id FOREIGN KEY (trait_id) REFERENCES trait (trait_id),
+    CONSTRAINT trait_char_relation_fk_char_id FOREIGN KEY (char_id) REFERENCES vn_char (char_id))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table tag_vn_relation
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS tag_vn_relation;
+
+CREATE TABLE IF NOT EXISTS tag_vn_relation(
+    tag_id INT NOT NULL,
+    vn_id INT NOT NULL,
+    vote INT NULL,
+    CONSTRAINT tag_vn_relation_fk_tag_id FOREIGN KEY (tag_id) REFERENCES tag (tag_id),
+    CONSTRAINT tag_vn_relation_fk_release_id FOREIGN KEY (vn_id) REFERENCES vn (vn_id))
 ENGINE = InnoDB;
 
 
