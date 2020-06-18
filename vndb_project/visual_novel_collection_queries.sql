@@ -98,6 +98,7 @@ select count(*) from lang_vn_release_relation;
 -- ---------------------------------------------------------------------------
 -- most popular vn tags analysis
 -- ---------------------------------------------------------------------------
+-- most appeared tags on top 50 visual novels (in term of releases count)
 select tag_name, count(vn_id) as vn_count, tag_description
 from
 	(select vn.vn_id, count(release_id) as release_count
@@ -112,6 +113,7 @@ group by tag_id
 having vn_count >= 25
 order by vn_count desc;
 
+-- most appeared tags on top 50 visual novels (in term of language count)
 select tag_name, count(vn_id) as vn_count, tag_description
 from( 
 	select vn.vn_id, count(distinct language_code) as lang_count
@@ -126,11 +128,3 @@ left join tag using (tag_id)
 group by tag_id
 having vn_count >= 25
 order by vn_count desc;
-
-select vn.vn_id, count(distinct language_code) as lang_count
-from vn 
-left join vn_release using (vn_id)
-left join lang_vn_release_relation using (release_id)
-group by vn_id
-order by lang_count desc
-limit 50;
