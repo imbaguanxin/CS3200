@@ -1,5 +1,68 @@
 use vn_collection;
 
+
+-- ---------------------------------------------------------------------
+-- basic usages:
+-- ---------------------------------------------------------------------
+-- find a visual novel's releases by name
+
+drop procedure if exists find_release_by_vn_name;
+
+delimiter //
+create procedure find_release_by_vn_name
+(
+	in vn_title_param varchar(500)
+)
+begin
+    
+    select * from vn_release
+	where vn_id in (select vn_id from vn where en_title like concat('%', vn_title_param, '%'));
+    
+end //
+delimiter ;
+-- test case
+call find_release_by_vn_name("Steins;Gate");
+
+-- find a visual novel's releases by producer
+drop procedure if exists find_vn_by_producer_name;
+
+delimiter //
+create procedure find_vn_by_producer_name
+(
+	in producer_name_param varchar(500)
+)
+begin
+    
+    select en_title, original_title
+	from vn_producer_relation
+	left join vn using (vn_id)
+	where producer_id in (
+		select producer_id from producer where en_name like concat("%", producer_name_param, "%")
+	);
+    
+end //
+delimiter ;
+-- test case
+call find_vn_by_producer_name('Yuzusoft');
+
+-- find the characters of visual novel: white album
+drop procedure if exists find_chars_by_vn_name;
+delimiter //
+create procedure find_chars_by_vn_name
+(
+	in vn_name_param varchar(500)
+)
+begin
+    
+	select distinct vn_char.*, r.role
+	from (select * from vn where en_title like concat('%', vn_name_param, '%')) as v
+	left join char_vn_relation r using (vn_id)
+	left join vn_char using (char_id);
+    
+end //
+delimiter ;
+-- test case
+call find_chars_by_vn_name('white album');
 -- ---------------------------------------------------------------------
 -- trait analysis
 -- ---------------------------------------------------------------------
